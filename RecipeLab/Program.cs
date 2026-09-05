@@ -1,4 +1,8 @@
 
+using Microsoft.EntityFrameworkCore;
+using RecipeLab.Infrastructure.Persistence;
+using Scalar.AspNetCore;
+
 namespace RecipeLab
 {
     public class Program
@@ -13,12 +17,17 @@ namespace RecipeLab
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
             builder.Services.AddOpenApi();
 
+            builder.Services.AddDbContext<RecipeLabDbContext>(options => {
+                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+            });
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
                 app.MapOpenApi();
+                app.MapScalarApiReference();
             }
 
             app.UseHttpsRedirection();
