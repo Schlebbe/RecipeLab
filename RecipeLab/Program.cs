@@ -21,11 +21,11 @@ namespace RecipeLab
 
             builder.Services.AddDataProtection();
 
+            builder.Services.AddAuthorization();
+
             builder.Services
-                .AddIdentityCore<ApplicationUser>()
-                .AddEntityFrameworkStores<RecipeLabDbContext>()
-                .AddSignInManager()
-                .AddDefaultTokenProviders();
+                .AddIdentityApiEndpoints<ApplicationUser>()
+                .AddEntityFrameworkStores<RecipeLabDbContext>();
 
             builder.Services.AddDbContext<RecipeLabDbContext>(options => {
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
@@ -42,10 +42,13 @@ namespace RecipeLab
 
             app.UseHttpsRedirection();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
 
             app.MapControllers();
+
+            app.MapGroup("/api/auth").MapIdentityApi<ApplicationUser>();
 
             app.Run();
         }
