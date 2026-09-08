@@ -48,7 +48,7 @@ namespace RecipeLab
 
             app.MapControllers();
 
-            app.MapGroup("/api/auth").MapIdentityApi<ApplicationUser>();
+            app.MapGroup("/api/Auth").MapIdentityApi<ApplicationUser>();
 
             app.Run();
         }

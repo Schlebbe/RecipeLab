@@ -6,7 +6,7 @@ using RecipeLab.Infrastructure.Identity;
 namespace RecipeLab.Controllers
 {
     [ApiController]
-    [Route("api/auth")]
+    [Route("api/[controller]")]
     public class AuthController : ControllerBase
     {
         private readonly SignInManager<ApplicationUser> _signInManager;
