@@ -1,10 +1,11 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using RecipeLab.Domain;
+using RecipeLab.Infrastructure.Identity;
 
 namespace RecipeLab.Infrastructure.Persistence
 {
-    public class RecipeLabDbContext : IdentityDbContext
+    public class RecipeLabDbContext : IdentityDbContext<ApplicationUser>
     {
         public DbSet<Recipe> Recipes => Set<Recipe>();
         public DbSet<Ingredient> Ingredients => Set<Ingredient>();

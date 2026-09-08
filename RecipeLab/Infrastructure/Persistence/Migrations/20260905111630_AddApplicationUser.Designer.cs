@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RecipeLab.Infrastructure.Persistence;
 
@@ -11,9 +12,11 @@ using RecipeLab.Infrastructure.Persistence;
 namespace RecipeLab.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(RecipeLabDbContext))]
-    partial class RecipeLabDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260905111630_AddApplicationUser")]
+    partial class AddApplicationUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

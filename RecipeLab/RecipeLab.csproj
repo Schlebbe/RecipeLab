@@ -23,7 +23,6 @@
 
   <ItemGroup>
     <Folder Include="Controllers\" />
-    <Folder Include="Infrastructure\Identity\" />
     <Folder Include="Infrastructure\Persistence\Migrations\" />
     <Folder Include="Features\" />
   </ItemGroup>
