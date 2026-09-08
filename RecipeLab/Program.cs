@@ -1,9 +1,6 @@
 
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using RecipeLab.Features.Recipes;
+using RecipeLab.Extensions;
 using RecipeLab.Infrastructure.Identity;
-using RecipeLab.Infrastructure.Persistence;
 using Scalar.AspNetCore;
 
 namespace RecipeLab
@@ -17,22 +14,12 @@ namespace RecipeLab
             // Add services to the container.
 
             builder.Services.AddControllers();
-            // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
             builder.Services.AddOpenApi();
-
             builder.Services.AddDataProtection();
-
             builder.Services.AddAuthorization();
 
-            builder.Services.AddScoped<IRecipeService, RecipeService>();
-
-            builder.Services
-                .AddIdentityApiEndpoints<ApplicationUser>()
-                .AddEntityFrameworkStores<RecipeLabDbContext>();
-
-            builder.Services.AddDbContext<RecipeLabDbContext>(options => {
-                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
-            });
+            // Add RecipeLab specific services
+            builder.Services.AddRecipeLabServices(builder.Configuration);
 
             var app = builder.Build();
 
