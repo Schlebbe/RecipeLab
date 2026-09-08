@@ -1,6 +1,7 @@
 
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using RecipeLab.Features.Recipes;
 using RecipeLab.Infrastructure.Identity;
 using RecipeLab.Infrastructure.Persistence;
 using Scalar.AspNetCore;
@@ -22,6 +23,8 @@ namespace RecipeLab
             builder.Services.AddDataProtection();
 
             builder.Services.AddAuthorization();
+
+            builder.Services.AddScoped<IRecipeService, RecipeService>();
 
             builder.Services
                 .AddIdentityApiEndpoints<ApplicationUser>()
