@@ -86,5 +86,20 @@ namespace RecipeLab.Controllers
 
             return Ok(updatedRecipe);
         }
+
+        [HttpDelete("{id:guid}")]
+        public async Task<IActionResult> DeleteByIdAsync(Guid id, CancellationToken cancellationToken)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized();
+            }
+
+            var result = await _recipeService.DeleteForUserAsync(userId, id, cancellationToken);
+
+            return result ? NoContent() : NotFound();
+        }
     }
 }

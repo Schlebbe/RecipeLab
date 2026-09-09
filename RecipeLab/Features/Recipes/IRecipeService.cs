@@ -6,5 +6,6 @@
         Task<RecipeResponseDto> CreateForUserAsync(string userId, CreateRecipeRequestDto request, CancellationToken cancellationToken);
         Task<RecipeResponseDto?> GetByIdForUserAsync(string userId, Guid recipeId, CancellationToken cancellationToken);
         Task<RecipeResponseDto?> UpdateForUserAsync(string userId, Guid recipeId, UpdateRecipeRequestDto request, CancellationToken cancellationToken);
+        Task<bool> DeleteForUserAsync(string userId, Guid recipeId, CancellationToken cancellationToken);
     }
 }

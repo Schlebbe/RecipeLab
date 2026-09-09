@@ -94,5 +94,18 @@ namespace RecipeLab.Features.Recipes
                 CreatedAtUtc = recipe.CreatedAtUtc
             };
         }
+
+        public async Task<bool> DeleteForUserAsync(string userId, Guid recipeId, CancellationToken cancellationToken)
+        {
+            var recipe = await _dbContext.Recipes.SingleOrDefaultAsync(recipe => recipe.Id == recipeId && recipe.UserId == userId, cancellationToken);
+
+            if (recipe is null)
+            {
+                return false;
+            }
+
+            _dbContext.Recipes.Remove(recipe);
+            return await _dbContext.SaveChangesAsync(cancellationToken) > 0;
+        }
     }
 }
