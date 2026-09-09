@@ -66,5 +66,25 @@ namespace RecipeLab.Controllers
 
             return Ok(recipe);
         }
+
+        [HttpPut("{id:guid}")]
+        public async Task<ActionResult<RecipeResponseDto>> UpdateByIdAsync(Guid id, UpdateRecipeRequestDto request, CancellationToken cancellationToken)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized();
+            }
+
+            var updatedRecipe = await _recipeService.UpdateForUserAsync(userId, id, request, cancellationToken);
+
+            if (updatedRecipe is null)
+            {
+                return NotFound();
+            }
+
+            return Ok(updatedRecipe);
+        }
     }
 }

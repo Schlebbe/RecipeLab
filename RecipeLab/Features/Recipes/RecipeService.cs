@@ -71,5 +71,28 @@ namespace RecipeLab.Features.Recipes
                 })
                 .SingleOrDefaultAsync(cancellationToken);
         }
+
+        public async Task<RecipeResponseDto?> UpdateForUserAsync(string userId, Guid recipeId, UpdateRecipeRequestDto request, CancellationToken cancellationToken)
+        {
+            var recipe = await _dbContext.Recipes.SingleOrDefaultAsync(recipe => recipe.UserId == userId && recipe.Id == recipeId, cancellationToken);
+
+            if (recipe is null)
+            {
+                return null;
+            }
+
+            recipe.Name = request.Name.Trim();
+            recipe.Description = request.Description;
+
+            await _dbContext.SaveChangesAsync(cancellationToken);
+
+            return new RecipeResponseDto
+            {
+                Id = recipe.Id,
+                Name = recipe.Name,
+                Description = recipe.Description,
+                CreatedAtUtc = recipe.CreatedAtUtc
+            };
+        }
     }
 }
