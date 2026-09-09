@@ -31,5 +31,40 @@ namespace RecipeLab.Controllers
 
             return Ok(userRecipes);
         }
+
+        [HttpPost]
+        public async Task<ActionResult<RecipeResponseDto>> CreateForUserAsync(CreateRecipeRequestDto request, CancellationToken cancellation)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized();
+            }
+
+            var recipe = await _recipeService.CreateForUserAsync(userId, request, cancellation);
+
+            return CreatedAtAction(nameof(GetByIdAsync), new { id = recipe.Id }, recipe);
+        }
+
+        [HttpGet("{id:guid}")]
+        public async Task<ActionResult<RecipeResponseDto>> GetByIdAsync(Guid id, CancellationToken cancellationToken)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized();
+            }
+
+            var recipe = await _recipeService.GetByIdForUserAsync(userId, id, cancellationToken);
+
+            if (recipe is null)
+            {
+                return NotFound();
+            }
+
+            return Ok(recipe);
+        }
     }
 }
