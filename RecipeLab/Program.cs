@@ -11,9 +11,14 @@ namespace RecipeLab
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            // Allow async suffix in action names to avoid name conflicts with async methods in controllers
+            builder.Services.AddControllers(options =>
+            {
+                options.SuppressAsyncSuffixInActionNames = false;
+            });
+
             // Add services to the container.
 
-            builder.Services.AddControllers();
             builder.Services.AddOpenApi();
             builder.Services.AddDataProtection();
             builder.Services.AddAuthorization();
