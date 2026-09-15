@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using RecipeLab.Features.Ingredients;
 using RecipeLab.Features.Recipes;
 using RecipeLab.Infrastructure.Identity;
 using RecipeLab.Infrastructure.Persistence;
@@ -19,6 +20,7 @@ namespace RecipeLab.Extensions
                 .AddEntityFrameworkStores<RecipeLabDbContext>();
 
             services.AddScoped<IRecipeService, RecipeService>();
+            services.AddScoped<IIngredientService, IngredientService>();
 
             return services;
         }

@@ -62,6 +62,12 @@ namespace RecipeLab.Infrastructure.Persistence
                 entity.Property(ingredient => ingredient.Name)
                     .IsRequired()
                     .HasMaxLength(120);
+
+                entity.HasIndex(ingredient => new
+                {
+                    ingredient.UserId,
+                    ingredient.Name
+                });
             });
 
             modelBuilder.Entity<RecipeIngredient>(entity =>
