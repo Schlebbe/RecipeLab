@@ -95,5 +95,34 @@ namespace RecipeLab.Features.RecipeIngredients
                 }
             };
         }
+
+        public async Task<RecipeIngredientResponseDto?> UpdateForRecipeAsync(string userId, Guid recipeId, Guid ingredientId, UpdateRecipeIngredientRequestDto request, CancellationToken cancellationToken)
+        {
+            var recipeIngredient = await _dbContext.RecipeIngredients
+                .Include(recipeIngredient => recipeIngredient.Ingredient)
+                .SingleOrDefaultAsync(recipeIngredient =>
+                    recipeIngredient.RecipeId == recipeId &&
+                    recipeIngredient.IngredientId == ingredientId &&
+                    recipeIngredient.Recipe.UserId == userId &&
+                    recipeIngredient.Ingredient.UserId == userId,
+                    cancellationToken);
+
+            if (recipeIngredient is null)
+            {
+                return null;
+            }
+
+            recipeIngredient.Quantity = request.Quantity;
+
+            await _dbContext.SaveChangesAsync(cancellationToken);
+
+            return new RecipeIngredientResponseDto
+            {
+                RecipeId = recipeIngredient.RecipeId,
+                IngredientId = recipeIngredient.IngredientId,
+                IngredientName = recipeIngredient.Ingredient.Name,
+                Quantity = recipeIngredient.Quantity
+            };
+        }
     }
 }

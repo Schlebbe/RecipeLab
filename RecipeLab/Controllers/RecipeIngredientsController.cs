@@ -61,5 +61,25 @@ namespace RecipeLab.Controllers
 
             return CreatedAtAction(nameof(GetForRecipeAsync), new { recipeId }, result.RecipeIngredient);
         }
+
+        [HttpPut("recipe/{recipeId:guid}/ingredient/{ingredientId:guid}")]
+        public async Task<ActionResult<RecipeIngredientResponseDto>> UpdateByIdAsync(Guid recipeId, Guid ingredientId, UpdateRecipeIngredientRequestDto request, CancellationToken cancellationToken)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized();
+            }
+
+            var updatedRecipeIngredient = await _recipeIngredientService.UpdateForRecipeAsync(userId, recipeId, ingredientId, request, cancellationToken);
+
+            if (updatedRecipeIngredient is null)
+            {
+                return NotFound();
+            }
+
+            return Ok(updatedRecipeIngredient);
+        }
     }
 }
