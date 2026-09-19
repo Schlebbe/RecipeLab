@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using RecipeLab.Features.Ingredients;
+using RecipeLab.Features.RecipeIngredients;
 using RecipeLab.Features.RecipeExperiments;
 using RecipeLab.Features.Recipes;
 using RecipeLab.Infrastructure.Identity;
@@ -23,6 +24,7 @@ namespace RecipeLab.Extensions
             services.AddScoped<IRecipeService, RecipeService>();
             services.AddScoped<IIngredientService, IngredientService>();
             services.AddScoped<IRecipeExperimentService, RecipeExperimentService>();
+            services.AddScoped<IRecipeIngredientService, RecipeIngredientService>();
 
             return services;
         }
