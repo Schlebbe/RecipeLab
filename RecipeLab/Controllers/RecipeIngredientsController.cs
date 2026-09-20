@@ -101,5 +101,20 @@ namespace RecipeLab.Controllers
 
             return Ok(updatedRecipeIngredient);
         }
+
+        [HttpDelete("recipe/{recipeId:guid}/ingredient/{ingredientId:guid}")]
+        public async Task<IActionResult> DeleteByIdAsync(Guid recipeId, Guid ingredientId, CancellationToken cancellationToken)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized();
+            }
+
+            var result = await _recipeIngredientService.DeleteForRecipeAsync(userId, recipeId, ingredientId, cancellationToken);
+
+            return result ? NoContent() : NotFound();
+        }
     }
 }

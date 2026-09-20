@@ -143,5 +143,25 @@ namespace RecipeLab.Features.RecipeIngredients
                 Quantity = recipeIngredient.Quantity
             };
         }
+
+        public async Task<bool> DeleteForRecipeAsync(string userId, Guid recipeId, Guid ingredientId, CancellationToken cancellationToken)
+        {
+            var recipeIngredient = await _dbContext.RecipeIngredients
+                .SingleOrDefaultAsync(recipeIngredient =>
+                    recipeIngredient.RecipeId == recipeId &&
+                    recipeIngredient.IngredientId == ingredientId &&
+                    recipeIngredient.Recipe.UserId == userId &&
+                    recipeIngredient.Ingredient.UserId == userId,
+                    cancellationToken);
+
+            if (recipeIngredient is null)
+            {
+                return false;
+            }
+
+            _dbContext.RecipeIngredients.Remove(recipeIngredient);
+
+            return await _dbContext.SaveChangesAsync(cancellationToken) > 0;
+        }
     }
 }

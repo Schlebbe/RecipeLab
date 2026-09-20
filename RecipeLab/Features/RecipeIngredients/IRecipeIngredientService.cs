@@ -6,5 +6,6 @@ namespace RecipeLab.Features.RecipeIngredients
         Task<RecipeIngredientResponseDto?> GetByIdForRecipeAsync(string userId, Guid recipeId, Guid ingredientId, CancellationToken cancellationToken);
         Task<RecipeIngredientAddResult> AddToRecipeAsync(string userId, Guid recipeId, AddRecipeIngredientRequestDto request, CancellationToken cancellationToken);
         Task<RecipeIngredientResponseDto?> UpdateForRecipeAsync(string userId, Guid recipeId, Guid ingredientId, UpdateRecipeIngredientRequestDto request, CancellationToken cancellationToken);
+        Task<bool> DeleteForRecipeAsync(string userId, Guid recipeId, Guid ingredientId, CancellationToken cancellationToken);
     }
 }
