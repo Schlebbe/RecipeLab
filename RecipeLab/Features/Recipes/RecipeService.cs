@@ -47,12 +47,33 @@ namespace RecipeLab.Features.Recipes
                 .Select(experiment => (double?)experiment.Rating)
                 .AverageAsync(cancellationToken);
 
+            var topRatedRecipes = await _dbContext.RecipeExperiments
+                .Where(experiment => experiment.UserId == userId && experiment.Recipe.UserId == userId)
+                .GroupBy(experiment => new
+                {
+                    experiment.RecipeId,
+                    RecipeName = experiment.Recipe.Name
+                })
+                .Select(group => new TopRatedRecipeDto
+                {
+                    RecipeId = group.Key.RecipeId,
+                    RecipeName = group.Key.RecipeName,
+                    AverageRating = group.Average(experiment => (double)experiment.Rating),
+                    ExperimentCount = group.Count()
+                })
+                .OrderByDescending(recipe => recipe.AverageRating)
+                .ThenByDescending(recipe => recipe.ExperimentCount)
+                .ThenBy(recipe => recipe.RecipeName)
+                .Take(3)
+                .ToListAsync(cancellationToken);
+
             return new RecipeStatisticsResponseDto
             {
                 RecipeCount = recipeCount,
                 IngredientCount = ingredientCount,
                 ExperimentCount = experimentCount,
-                AverageRating = averageRating
+                AverageRating = averageRating,
+                TopRatedRecipes = topRatedRecipes
             };
         }
 
