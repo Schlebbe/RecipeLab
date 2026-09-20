@@ -32,6 +32,21 @@ namespace RecipeLab.Controllers
             return Ok(userRecipes);
         }
 
+        [HttpGet("statistics")]
+        public async Task<ActionResult<RecipeStatisticsResponseDto>> GetStatisticsForUserAsync(CancellationToken cancellation)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized();
+            }
+
+            var statistics = await _recipeService.GetStatisticsForUserAsync(userId, cancellation);
+
+            return Ok(statistics);
+        }
+
         [HttpPost]
         public async Task<ActionResult<RecipeResponseDto>> CreateForUserAsync(CreateRecipeRequestDto request, CancellationToken cancellation)
         {

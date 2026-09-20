@@ -31,6 +31,31 @@ namespace RecipeLab.Features.Recipes
             return userRecipes;
         }
 
+        public async Task<RecipeStatisticsResponseDto> GetStatisticsForUserAsync(string userId, CancellationToken cancellationToken)
+        {
+            var recipeCount = await _dbContext.Recipes
+                .CountAsync(recipe => recipe.UserId == userId, cancellationToken);
+
+            var ingredientCount = await _dbContext.Ingredients
+                .CountAsync(ingredient => ingredient.UserId == userId, cancellationToken);
+
+            var experimentCount = await _dbContext.RecipeExperiments
+                .CountAsync(experiment => experiment.UserId == userId, cancellationToken);
+
+            var averageRating = await _dbContext.RecipeExperiments
+                .Where(experiment => experiment.UserId == userId)
+                .Select(experiment => (double?)experiment.Rating)
+                .AverageAsync(cancellationToken);
+
+            return new RecipeStatisticsResponseDto
+            {
+                RecipeCount = recipeCount,
+                IngredientCount = ingredientCount,
+                ExperimentCount = experimentCount,
+                AverageRating = averageRating
+            };
+        }
+
         public async Task<RecipeResponseDto> CreateForUserAsync(string userId, CreateRecipeRequestDto request, CancellationToken cancellationToken)
         {
             var recipeName = request.Name.Trim();
