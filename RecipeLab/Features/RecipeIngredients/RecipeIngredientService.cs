@@ -42,6 +42,25 @@ namespace RecipeLab.Features.RecipeIngredients
             return recipeIngredients;
         }
 
+        public async Task<RecipeIngredientResponseDto?> GetByIdForRecipeAsync(string userId, Guid recipeId, Guid ingredientId, CancellationToken cancellationToken)
+        {
+            return await _dbContext.RecipeIngredients
+                .AsNoTracking()
+                .Where(recipeIngredient =>
+                    recipeIngredient.RecipeId == recipeId &&
+                    recipeIngredient.IngredientId == ingredientId &&
+                    recipeIngredient.Recipe.UserId == userId &&
+                    recipeIngredient.Ingredient.UserId == userId)
+                .Select(recipeIngredient => new RecipeIngredientResponseDto
+                {
+                    RecipeId = recipeIngredient.RecipeId,
+                    IngredientId = recipeIngredient.IngredientId,
+                    IngredientName = recipeIngredient.Ingredient.Name,
+                    Quantity = recipeIngredient.Quantity
+                })
+                .SingleOrDefaultAsync(cancellationToken);
+        }
+
         public async Task<RecipeIngredientAddResult> AddToRecipeAsync(string userId, Guid recipeId, AddRecipeIngredientRequestDto request, CancellationToken cancellationToken)
         {
             var recipeExists = await _dbContext.Recipes

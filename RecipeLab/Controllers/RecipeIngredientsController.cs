@@ -37,6 +37,26 @@ namespace RecipeLab.Controllers
             return Ok(recipeIngredients);
         }
 
+        [HttpGet("recipe/{recipeId:guid}/ingredient/{ingredientId:guid}")]
+        public async Task<ActionResult<RecipeIngredientResponseDto>> GetByIdAsync(Guid recipeId, Guid ingredientId, CancellationToken cancellationToken)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized();
+            }
+
+            var recipeIngredient = await _recipeIngredientService.GetByIdForRecipeAsync(userId, recipeId, ingredientId, cancellationToken);
+
+            if (recipeIngredient is null)
+            {
+                return NotFound();
+            }
+
+            return Ok(recipeIngredient);
+        }
+
         [HttpPost("recipe/{recipeId:guid}")]
         public async Task<ActionResult<RecipeIngredientResponseDto>> AddToRecipeAsync(Guid recipeId, AddRecipeIngredientRequestDto request, CancellationToken cancellation)
         {
@@ -59,7 +79,7 @@ namespace RecipeLab.Controllers
                 return Conflict();
             }
 
-            return CreatedAtAction(nameof(GetForRecipeAsync), new { recipeId }, result.RecipeIngredient);
+            return CreatedAtAction(nameof(GetByIdAsync), new { recipeId, ingredientId = result.RecipeIngredient!.IngredientId }, result.RecipeIngredient);
         }
 
         [HttpPut("recipe/{recipeId:guid}/ingredient/{ingredientId:guid}")]
