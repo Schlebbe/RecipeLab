@@ -7,7 +7,7 @@ namespace RecipeLab
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
@@ -33,6 +33,7 @@ namespace RecipeLab
             {
                 app.MapOpenApi();
                 app.MapScalarApiReference();
+                await app.SeedDevelopmentDataAsync();
             }
 
             app.UseHttpsRedirection();
