@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using RecipeLab.Features.Auth;
 using RecipeLab.Infrastructure.Identity;
+using System.Security.Claims;
 
 namespace RecipeLab.Controllers
 {
@@ -14,6 +16,25 @@ namespace RecipeLab.Controllers
         public AuthController(SignInManager<ApplicationUser> signInManager)
         {
             _signInManager = signInManager;
+        }
+
+        [Authorize]
+        [HttpGet("me")]
+        public ActionResult<CurrentUserResponseDto> GetCurrentUser()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var email = User.FindFirstValue(ClaimTypes.Email);
+
+            if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(email))
+            {
+                return Unauthorized();
+            }
+
+            return Ok(new CurrentUserResponseDto
+            {
+                Id = userId,
+                Email = email
+            });
         }
 
         [Authorize]
