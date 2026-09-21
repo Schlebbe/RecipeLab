@@ -12,6 +12,21 @@ namespace RecipeLab.Extensions
     {
         public static IServiceCollection AddRecipeLabServices(this IServiceCollection services, IConfiguration configuration)
         {
+            var frontendOrigin = configuration["Frontend:Origin"] ??
+                throw new InvalidOperationException("Frontend:Origin configuration is required.");
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy("Frontend", policy =>
+                {
+                    policy
+                        .WithOrigins(frontendOrigin)
+                        .AllowAnyHeader()
+                        .AllowAnyMethod()
+                        .AllowCredentials();
+                });
+            });
+
             services.AddDbContext<RecipeLabDbContext>(options =>
             {
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));

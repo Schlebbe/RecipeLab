@@ -37,6 +37,8 @@ namespace RecipeLab
 
             app.UseHttpsRedirection();
 
+            app.UseCors("Frontend");
+
             app.UseAuthentication();
             app.UseAuthorization();
 
