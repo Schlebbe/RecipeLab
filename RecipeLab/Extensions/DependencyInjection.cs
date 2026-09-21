@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Http;
 using RecipeLab.Features.Ingredients;
 using RecipeLab.Features.RecipeIngredients;
 using RecipeLab.Features.RecipeExperiments;
@@ -35,6 +36,12 @@ namespace RecipeLab.Extensions
             services
                 .AddIdentityApiEndpoints<ApplicationUser>()
                 .AddEntityFrameworkStores<RecipeLabDbContext>();
+
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.Cookie.SameSite = SameSiteMode.None;
+                options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+            });
 
             services.AddScoped<IRecipeService, RecipeService>();
             services.AddScoped<IIngredientService, IngredientService>();
