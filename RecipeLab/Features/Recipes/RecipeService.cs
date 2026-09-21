@@ -82,6 +82,34 @@ namespace RecipeLab.Features.Recipes
                 .Take(3)
                 .ToListAsync(cancellationToken);
 
+            var topRatedIngredients = await _dbContext.RecipeExperiments
+                .Where(experiment => experiment.UserId == userId && experiment.Recipe.UserId == userId)
+                .SelectMany(experiment => experiment.Recipe.RecipeIngredients
+                    .Where(recipeIngredient => recipeIngredient.Ingredient.UserId == userId)
+                    .Select(recipeIngredient => new
+                    {
+                        recipeIngredient.IngredientId,
+                        IngredientName = recipeIngredient.Ingredient.Name,
+                        experiment.Rating
+                    }))
+                .GroupBy(item => new
+                {
+                    item.IngredientId,
+                    item.IngredientName
+                })
+                .Select(group => new TopRatedIngredientDto
+                {
+                    IngredientId = group.Key.IngredientId,
+                    IngredientName = group.Key.IngredientName,
+                    AverageRating = group.Average(item => (double)item.Rating),
+                    ExperimentCount = group.Count()
+                })
+                .OrderByDescending(ingredient => ingredient.AverageRating)
+                .ThenByDescending(ingredient => ingredient.ExperimentCount)
+                .ThenBy(ingredient => ingredient.IngredientName)
+                .Take(3)
+                .ToListAsync(cancellationToken);
+
             return new RecipeStatisticsResponseDto
             {
                 RecipeCount = recipeCount,
@@ -89,7 +117,8 @@ namespace RecipeLab.Features.Recipes
                 ExperimentCount = experimentCount,
                 AverageRating = averageRating,
                 TopRatedRecipes = topRatedRecipes,
-                TopRatedPreparationMethods = topRatedPreparationMethods
+                TopRatedPreparationMethods = topRatedPreparationMethods,
+                TopRatedIngredients = topRatedIngredients
             };
         }
 

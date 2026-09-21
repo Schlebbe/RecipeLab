@@ -8,5 +8,6 @@ namespace RecipeLab.Features.Recipes
         public double? AverageRating { get; set; }
         public IReadOnlyList<TopRatedRecipeDto> TopRatedRecipes { get; set; } = [];
         public IReadOnlyList<TopRatedPreparationMethodDto> TopRatedPreparationMethods { get; set; } = [];
+        public IReadOnlyList<TopRatedIngredientDto> TopRatedIngredients { get; set; } = [];
     }
 }
