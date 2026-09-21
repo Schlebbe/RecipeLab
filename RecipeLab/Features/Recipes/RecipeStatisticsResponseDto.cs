@@ -7,5 +7,6 @@ namespace RecipeLab.Features.Recipes
         public int ExperimentCount { get; set; }
         public double? AverageRating { get; set; }
         public IReadOnlyList<TopRatedRecipeDto> TopRatedRecipes { get; set; } = [];
+        public IReadOnlyList<TopRatedPreparationMethodDto> TopRatedPreparationMethods { get; set; } = [];
     }
 }

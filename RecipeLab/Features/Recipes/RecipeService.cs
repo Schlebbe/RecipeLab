@@ -67,13 +67,29 @@ namespace RecipeLab.Features.Recipes
                 .Take(3)
                 .ToListAsync(cancellationToken);
 
+            var topRatedPreparationMethods = await _dbContext.RecipeExperiments
+                .Where(experiment => experiment.UserId == userId)
+                .GroupBy(experiment => experiment.PreparationMethod)
+                .Select(group => new TopRatedPreparationMethodDto
+                {
+                    PreparationMethod = group.Key,
+                    AverageRating = group.Average(experiment => (double)experiment.Rating),
+                    ExperimentCount = group.Count()
+                })
+                .OrderByDescending(method => method.AverageRating)
+                .ThenByDescending(method => method.ExperimentCount)
+                .ThenBy(method => method.PreparationMethod)
+                .Take(3)
+                .ToListAsync(cancellationToken);
+
             return new RecipeStatisticsResponseDto
             {
                 RecipeCount = recipeCount,
                 IngredientCount = ingredientCount,
                 ExperimentCount = experimentCount,
                 AverageRating = averageRating,
-                TopRatedRecipes = topRatedRecipes
+                TopRatedRecipes = topRatedRecipes,
+                TopRatedPreparationMethods = topRatedPreparationMethods
             };
         }
 
