@@ -29,10 +29,11 @@ namespace RecipeLab
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
+            app.MapOpenApi();
+            app.MapScalarApiReference();
+
             if (app.Environment.IsDevelopment())
             {
-                app.MapOpenApi();
-                app.MapScalarApiReference();
                 await app.SeedDevelopmentDataAsync();
             }
 
