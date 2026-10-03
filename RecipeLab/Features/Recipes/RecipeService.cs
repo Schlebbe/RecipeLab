@@ -13,12 +13,28 @@ namespace RecipeLab.Features.Recipes
             _dbContext = dbContext;
         }
 
-        public async Task<IReadOnlyList<RecipeResponseDto>> GetForUserAsync(string userId, CancellationToken cancellationToken)
+        public async Task<RecipeSearchResponseDto> GetForUserAsync(string userId, RecipeSearchRequestDto request, CancellationToken cancellationToken)
         {
-            var userRecipes = await _dbContext.Recipes
+            var query = _dbContext.Recipes
                 .Where(r => r.UserId == userId)
-                .AsNoTracking()
+                .AsNoTracking();
+
+            var search = request.Search?.Trim();
+
+            if (!string.IsNullOrEmpty(search))
+            {
+                query = query.Where(r => r.Name.Contains(search));
+            }
+
+            var totalCount = await query.CountAsync(cancellationToken);
+            var totalPages = (int)Math.Ceiling(totalCount / (double)request.PageSize);
+            var page = Math.Min(request.Page, Math.Max(1, totalPages));
+
+            var userRecipes = await query
                 .OrderByDescending(r => r.CreatedAtUtc)
+                .ThenByDescending(r => r.Id)
+                .Skip((page - 1) * request.PageSize)
+                .Take(request.PageSize)
                 .Select(r => new RecipeResponseDto
                 {
                     CreatedAtUtc = r.CreatedAtUtc,
@@ -28,7 +44,14 @@ namespace RecipeLab.Features.Recipes
                 })
                 .ToListAsync(cancellationToken);
 
-            return userRecipes;
+            return new RecipeSearchResponseDto
+            {
+                Items = userRecipes,
+                TotalCount = totalCount,
+                Page = page,
+                PageSize = request.PageSize,
+                TotalPages = totalPages
+            };
         }
 
         public async Task<RecipeStatisticsResponseDto> GetStatisticsForUserAsync(string userId, CancellationToken cancellationToken)

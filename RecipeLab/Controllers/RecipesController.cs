@@ -18,7 +18,7 @@ namespace RecipeLab.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IReadOnlyList<RecipeResponseDto>>> GetForUserAsync(CancellationToken cancellation)
+        public async Task<ActionResult<RecipeSearchResponseDto>> GetForUserAsync([FromQuery] RecipeSearchRequestDto request, CancellationToken cancellation)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
@@ -27,7 +27,7 @@ namespace RecipeLab.Controllers
                 return Unauthorized();
             }
 
-            var userRecipes = await _recipeService.GetForUserAsync(userId, cancellation);
+            var userRecipes = await _recipeService.GetForUserAsync(userId, request, cancellation);
 
             return Ok(userRecipes);
         }
